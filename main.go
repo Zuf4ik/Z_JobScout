@@ -44,7 +44,7 @@ func run() error {
 		return nil
 	}
 
-	body, err := os.ReadFile("remotive-response.json")
+	body, err := os.ReadFile("examples/vacancies.json")
 	if err != nil {
 		return fmt.Errorf("чтение файла: %w", err)
 	}
@@ -62,9 +62,11 @@ func run() error {
 		len(vacancies),
 	)
 
+	fmt.Println("Демонстрационные данные: вакансии вымышленные.")
+
 	for _, vacancy := range vacancies {
 		fmt.Println(vacancy.Name)
-		fmt.Println("Источник: Remotive")
+		fmt.Println("Источник: учебный пример")
 		fmt.Println(vacancy.URL)
 		fmt.Println()
 	}

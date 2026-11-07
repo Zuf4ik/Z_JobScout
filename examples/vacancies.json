@@ -1,0 +1,29 @@
+{
+  "job-count": 3,
+  "jobs": [
+    {
+      "id": 1,
+      "title": "Junior Go Developer",
+      "company_name": "Учебная компания А",
+      "url": "https://example.com/jobs/1",
+      "candidate_required_location": "Удалённо",
+      "description": "Разработка на Golang. Основы SQL и Git."
+    },
+    {
+      "id": 2,
+      "title": "Python Developer",
+      "company_name": "Учебная компания Б",
+      "url": "https://example.com/jobs/2",
+      "candidate_required_location": "Москва",
+      "description": "Разработка на Python. PostgreSQL и REST API."
+    },
+    {
+      "id": 3,
+      "title": "Backend Developer",
+      "company_name": "Учебная компания В",
+      "url": "https://example.com/jobs/3",
+      "candidate_required_location": "Удалённо",
+      "description": "Работа с Golang и Python. Разработка API."
+    }
+  ]
+}
