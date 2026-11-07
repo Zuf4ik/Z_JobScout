@@ -44,21 +44,16 @@ func run() error {
 		return nil
 	}
 
-	body, err := os.ReadFile("examples/vacancies.json")
+	items, err := loadVacancies("examples/vacancies.json")
 	if err != nil {
-		return fmt.Errorf("чтение файла: %w", err)
+		return err
 	}
 
-	var result SearchResponse
-	if err := json.Unmarshal(body, &result); err != nil {
-		return fmt.Errorf("разбор JSON: %w", err)
-	}
-
-	vacancies := filterVacancies(result.Items, query)
+	vacancies := filterVacancies(items, query)
 
 	fmt.Printf(
 		"Загружено: %d. Подходит: %d\n\n",
-		len(result.Items),
+		len(items),
 		len(vacancies),
 	)
 
@@ -72,6 +67,20 @@ func run() error {
 	}
 
 	return nil
+}
+
+func loadVacancies(path string) ([]Vacancy, error) {
+	body, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("чтение файла: %w", err)
+	}
+
+	var result SearchResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, fmt.Errorf("разбор JSON: %w", err)
+	}
+
+	return result.Items, nil
 }
 
 func filterVacancies(items []Vacancy, query string) []Vacancy {
