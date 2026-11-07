@@ -44,7 +44,14 @@ func run() error {
 		return nil
 	}
 
-	items, err := loadVacancies("examples/vacancies.json")
+	path := "examples/vacancies.json"
+
+	if len(os.Args) >= 3 {
+		path = os.Args[2]
+	}
+
+	items, err := loadVacancies(path)
+
 	if err != nil {
 		return err
 	}
@@ -57,11 +64,14 @@ func run() error {
 		len(vacancies),
 	)
 
-	fmt.Println("Демонстрационные данные: вакансии вымышленные.")
+	fmt.Println("Файлы данных:", path)
+
+	if path == "examples/vacancies.json" {
+		fmt.Println("Демонстрационные данные: вакансии вымышленные.")
+	}
 
 	for _, vacancy := range vacancies {
 		fmt.Println(vacancy.Name)
-		fmt.Println("Источник: учебный пример")
 		fmt.Println(vacancy.URL)
 		fmt.Println()
 	}
