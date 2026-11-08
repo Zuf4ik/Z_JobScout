@@ -30,6 +30,10 @@ type TrudvsemVacancy struct {
 	URL          string `json:"vac_url"`
 	Requirements string `json:"requirements"`
 	Duty         string `json:"duty"`
+	Salary       string `json:"salary"`
+	Requirement  struct {
+		Experience *int `json:"experience"`
+	} `json:"requirement"`
 
 	Company struct {
 		Name string `json:"name"`
@@ -69,11 +73,13 @@ func parseTrudvsemVacancies(body []byte) ([]Vacancy, error) {
 		v := entry.Vacancy
 
 		items = append(items, Vacancy{
-			Name:        v.Name,
-			Company:     v.Company.Name,
-			URL:         v.URL,
-			Location:    v.Region.Name,
-			Description: v.Requirements + "\n" + v.Duty,
+			Name:            v.Name,
+			Company:         v.Company.Name,
+			URL:             v.URL,
+			Location:        v.Region.Name,
+			Description:     v.Requirements + "\n" + v.Duty,
+			Salary:          v.Salary,
+			ExperienceYears: v.Requirement.Experience,
 		})
 	}
 

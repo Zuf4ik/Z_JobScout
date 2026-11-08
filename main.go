@@ -9,12 +9,14 @@ import (
 )
 
 type Vacancy struct {
-	ID          int    `json:"id"`
-	Name        string `json:"title"`
-	Company     string `json:"company_name"`
-	URL         string `json:"url"`
-	Location    string `json:"candidate_required_location"`
-	Description string `json:"description"`
+	ID              int    `json:"id"`
+	Name            string `json:"title"`
+	Company         string `json:"company_name"`
+	URL             string `json:"url"`
+	Location        string `json:"candidate_required_location"`
+	Description     string `json:"description"`
+	Salary          string `json:"salary"`
+	ExperienceYears *int   `json:"experience_years"`
 }
 
 type SearchResponse struct {
@@ -88,7 +90,25 @@ func run() error {
 	)
 
 	for _, vacancy := range vacancies {
+		salary := strings.TrimSpace(vacancy.Salary)
+		if salary == "" {
+			salary = "не указана"
+		}
+
 		fmt.Println(vacancy.Name)
+		fmt.Println("Компания:", vacancy.Company)
+		fmt.Println("Регион:", vacancy.Location)
+		fmt.Println("Зарплата:", salary)
+
+		if vacancy.ExperienceYears == nil {
+			fmt.Println("Требуемый опыт: не указан")
+		} else {
+			fmt.Printf(
+				"Требуемый опыт, лет: %d\n",
+				*vacancy.ExperienceYears,
+			)
+		}
+
 		fmt.Println(vacancy.URL)
 		fmt.Println()
 	}
