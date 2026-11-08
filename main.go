@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -32,45 +32,53 @@ func main() {
 }
 
 func run() error {
-	if len(os.Args) < 2 {
-		fmt.Println("Укажите поисковый запрос: go run . Golang")
-		return nil
+	queryFlag := flag.String(
+		"query", "",
+		"Поисковый запрос",
+	)
+
+	sourceFlag := flag.String(
+		"source", "remotive",
+		"Источник: remotive, trudvsem или trudvsem-online",
+	)
+
+	fileFlag := flag.String(
+		"file", "examples/vacancies.json",
+		"Путь к JSON-файлу",
+	)
+
+	maxYearsFlag := flag.Int(
+		"max-experience", -1,
+		"Максимальный требуемый опыт в годах; -1 — без ограничения",
+	)
+
+	telegramFlag := flag.Bool(
+		"telegram", false,
+		"Запустить Telegram-бота",
+	)
+
+	flag.Parse()
+
+	if *telegramFlag {
+		return runTelegram()
 	}
 
-	query := strings.TrimSpace(os.Args[1])
+	if flag.NArg() != 0 {
+		return fmt.Errorf("используйте именованные параметры; справка: go run . -h")
+	}
+
+	query := strings.TrimSpace(*queryFlag)
 	if query == "" {
-		fmt.Println("Поисковый запрос не должен быть пустым.")
-		return nil
+		return fmt.Errorf("укажите запрос: go run . -query Golang")
 	}
 
-	path := "examples/vacancies.json"
-	if len(os.Args) >= 3 {
-		path = os.Args[2]
+	source := *sourceFlag
+	path := *fileFlag
+	maxYears := *maxYearsFlag
+
+	if maxYears < -1 {
+		return fmt.Errorf("максимальный опыт должен быть -1 или неотрицательным числом")
 	}
-
-	source := "remotive"
-	if len(os.Args) >= 4 {
-		source = os.Args[3]
-	}
-
-	maxYears := -1
-
-	if len(os.Args) >= 5 {
-		value, err := strconv.Atoi(os.Args[4])
-		if err != nil {
-			return fmt.Errorf(
-				"максимальный опыт должен быть целым числом: %w",
-				err,
-			)
-		}
-
-		if value < 0 {
-			return fmt.Errorf("максимальный опыт не может быть отрицательным")
-		}
-
-		maxYears = value
-	}
-
 	var items []Vacancy
 	var err error
 
