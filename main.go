@@ -3,9 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-
 	"log"
-
 	"os"
 	"strings"
 )
@@ -31,44 +29,63 @@ func main() {
 }
 
 func run() error {
-
 	if len(os.Args) < 2 {
 		fmt.Println("Укажите поисковый запрос: go run . Golang")
 		return nil
 	}
 
 	query := strings.TrimSpace(os.Args[1])
-
 	if query == "" {
 		fmt.Println("Поисковый запрос не должен быть пустым.")
 		return nil
 	}
 
 	path := "examples/vacancies.json"
-
 	if len(os.Args) >= 3 {
 		path = os.Args[2]
 	}
 
-	items, err := loadVacancies(path)
+	source := "remotive"
+	if len(os.Args) >= 4 {
+		source = os.Args[3]
+	}
+
+	var items []Vacancy
+	var err error
+
+	switch source {
+	case "remotive":
+		items, err = loadVacancies(path)
+	case "trudvsem":
+		items, err = loadTrudvsemVacancies(path)
+	case "trudvsem-online":
+		items, err = fetchTrudvsemVacancies(query)
+	default:
+		return fmt.Errorf("неизвестный источник: %s", source)
+	}
 
 	if err != nil {
 		return err
 	}
 
+	if source == "trudvsem-online" {
+		fmt.Println("Источник: Работа России — https://trudvsem.ru")
+		fmt.Println("Получена первая страница, до 20 вакансий.")
+	} else {
+		fmt.Println("Файл данных:", path)
+
+		if path == "examples/vacancies.json" {
+			fmt.Println("Демонстрационные данные: вакансии вымышленные.")
+		}
+	}
+
 	vacancies := filterVacancies(items, query)
 
 	fmt.Printf(
-		"Загружено: %d. Подходит: %d\n\n",
+		"Загружено: %d. Совпадений по запросу: %d\n\n",
 		len(items),
 		len(vacancies),
 	)
-
-	fmt.Println("Файлы данных:", path)
-
-	if path == "examples/vacancies.json" {
-		fmt.Println("Демонстрационные данные: вакансии вымышленные.")
-	}
 
 	for _, vacancy := range vacancies {
 		fmt.Println(vacancy.Name)
