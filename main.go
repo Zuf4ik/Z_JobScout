@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -52,6 +53,24 @@ func run() error {
 		source = os.Args[3]
 	}
 
+	maxYears := -1
+
+	if len(os.Args) >= 5 {
+		value, err := strconv.Atoi(os.Args[4])
+		if err != nil {
+			return fmt.Errorf(
+				"максимальный опыт должен быть целым числом: %w",
+				err,
+			)
+		}
+
+		if value < 0 {
+			return fmt.Errorf("максимальный опыт не может быть отрицательным")
+		}
+
+		maxYears = value
+	}
+
 	var items []Vacancy
 	var err error
 
@@ -83,12 +102,27 @@ func run() error {
 
 	vacancies := filterVacancies(items, query)
 
+	textMatches := len(vacancies)
+
+	if maxYears >= 0 {
+		vacancies = filterByExperience(vacancies, maxYears)
+	}
+
 	fmt.Printf(
-		"Загружено: %d. Совпадений по запросу: %d\n\n",
+		"Загружено: %d. Совпадений по тексту: %d. После фильтров: %d\n",
 		len(items),
+		textMatches,
 		len(vacancies),
 	)
 
+	if maxYears >= 0 {
+		fmt.Printf(
+			"Максимальный требуемый опыт, лет: %d. Неизвестный опыт сохраняется.\n",
+			maxYears,
+		)
+	}
+
+	fmt.Println()
 	for _, vacancy := range vacancies {
 		salary := strings.TrimSpace(vacancy.Salary)
 		if salary == "" {
@@ -142,6 +176,22 @@ func filterVacancies(items []Vacancy, query string) []Vacancy {
 		if strings.Contains(text, query) {
 			filtered = append(filtered, vacancy)
 		}
+	}
+
+	return filtered
+}
+
+func filterByExperience(items []Vacancy, maxYears int) []Vacancy {
+	var filtered []Vacancy
+
+	for _, vacancy := range items {
+		if vacancy.ExperienceYears != nil {
+			if *vacancy.ExperienceYears > maxYears {
+				continue
+			}
+		}
+
+		filtered = append(filtered, vacancy)
 	}
 
 	return filtered
