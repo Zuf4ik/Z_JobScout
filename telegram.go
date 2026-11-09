@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Zuf4ik/Z_JobScout/internal/service"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
 )
@@ -85,12 +87,18 @@ func runTelegram() error {
 }
 
 func searchTrudvsemVacancies(query string) (string, error) {
-	items, err := fetchTrudvsemVacancies(query)
+	searchService := service.NewSearchService()
+
+	searchResult, err := searchService.Search(service.SearchParams{
+		Query:         query,
+		Source:        "trudvsem-online",
+		MaxExperience: -1,
+	})
 	if err != nil {
 		return "", err
 	}
 
-	vacancies := filterVacancies(items, query)
+	vacancies := searchResult.Vacancies
 
 	if len(vacancies) == 0 {
 		return "На полученной странице вакансий совпадений не найдено.", nil
