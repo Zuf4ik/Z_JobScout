@@ -7,18 +7,12 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"github.com/Zuf4ik/Z_JobScout/internal/search"
+	"github.com/Zuf4ik/Z_JobScout/internal/vacancy"
 )
 
-type Vacancy struct {
-	ID              int    `json:"id"`
-	Name            string `json:"title"`
-	Company         string `json:"company_name"`
-	URL             string `json:"url"`
-	Location        string `json:"candidate_required_location"`
-	Description     string `json:"description"`
-	Salary          string `json:"salary"`
-	ExperienceYears *int   `json:"experience_years"`
-}
+type Vacancy = vacancy.Vacancy
 
 type SearchResponse struct {
 	Items []Vacancy `json:"jobs"`
@@ -173,34 +167,9 @@ func loadVacancies(path string) ([]Vacancy, error) {
 }
 
 func filterVacancies(items []Vacancy, query string) []Vacancy {
-	var filtered []Vacancy
-	query = strings.ToLower(strings.TrimSpace(query))
-
-	for _, vacancy := range items {
-		text := strings.ToLower(
-			vacancy.Name + " " + vacancy.Description,
-		)
-
-		if strings.Contains(text, query) {
-			filtered = append(filtered, vacancy)
-		}
-	}
-
-	return filtered
+	return search.FilterByText(items, query)
 }
 
 func filterByExperience(items []Vacancy, maxYears int) []Vacancy {
-	var filtered []Vacancy
-
-	for _, vacancy := range items {
-		if vacancy.ExperienceYears != nil {
-			if *vacancy.ExperienceYears > maxYears {
-				continue
-			}
-		}
-
-		filtered = append(filtered, vacancy)
-	}
-
-	return filtered
+	return search.FilterByExperience(items, maxYears)
 }

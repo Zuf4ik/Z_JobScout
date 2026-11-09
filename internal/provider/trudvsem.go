@@ -1,4 +1,4 @@
-package main
+package provider
 
 import (
 	"encoding/json"
@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/Zuf4ik/Z_JobScout/internal/vacancy"
 )
 
 type TrudvsemResponse struct {
@@ -44,16 +46,16 @@ type TrudvsemVacancy struct {
 	} `json:"region"`
 }
 
-func loadTrudvsemVacancies(path string) ([]Vacancy, error) {
+func LoadTrudvsemVacancies(path string) ([]vacancy.Vacancy, error) {
 	body, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("чтение файла Работы России: %w", err)
 	}
 
-	return parseTrudvsemVacancies(body)
+	return ParseTrudvsemVacancies(body)
 }
 
-func parseTrudvsemVacancies(body []byte) ([]Vacancy, error) {
+func ParseTrudvsemVacancies(body []byte) ([]vacancy.Vacancy, error) {
 
 	var response TrudvsemResponse
 	if err := json.Unmarshal(body, &response); err != nil {
@@ -67,12 +69,12 @@ func parseTrudvsemVacancies(body []byte) ([]Vacancy, error) {
 		)
 	}
 
-	var items []Vacancy
+	var items []vacancy.Vacancy
 
 	for _, entry := range response.Results.Vacancies {
 		v := entry.Vacancy
 
-		items = append(items, Vacancy{
+		items = append(items, vacancy.Vacancy{
 			Name:            v.Name,
 			Company:         v.Company.Name,
 			URL:             v.URL,
@@ -86,7 +88,7 @@ func parseTrudvsemVacancies(body []byte) ([]Vacancy, error) {
 	return items, nil
 }
 
-func fetchTrudvsemVacancies(query string) ([]Vacancy, error) {
+func FetchTrudvsemVacancies(query string) ([]vacancy.Vacancy, error) {
 	params := url.Values{}
 	params.Set("text", query)
 	params.Set("limit", "20")
@@ -124,5 +126,5 @@ func fetchTrudvsemVacancies(query string) ([]Vacancy, error) {
 		)
 	}
 
-	return parseTrudvsemVacancies(body)
+	return ParseTrudvsemVacancies(body)
 }

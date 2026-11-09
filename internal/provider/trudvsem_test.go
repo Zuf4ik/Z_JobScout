@@ -1,4 +1,4 @@
-package main
+package provider
 
 import "testing"
 
@@ -32,7 +32,7 @@ func TestParseTrudvsemExperience(t *testing.T) {
 		}
 	}`)
 
-	items, err := parseTrudvsemVacancies(body)
+	items, err := ParseTrudvsemVacancies(body)
 	if err != nil {
 		t.Fatalf("ошибка разбора JSON: %v", err)
 	}
