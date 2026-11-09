@@ -75,6 +75,8 @@ func ParseTrudvsemVacancies(body []byte) ([]vacancy.Vacancy, error) {
 		v := entry.Vacancy
 
 		items = append(items, vacancy.Vacancy{
+			ID:              v.ID,
+			Source:          "trudvsem",
 			Name:            v.Name,
 			Company:         v.Company.Name,
 			URL:             v.URL,

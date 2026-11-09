@@ -1,7 +1,8 @@
 package vacancy
 
 type Vacancy struct {
-	ID              int    `json:"id"`
+	ID              string `json:"id"`
+	Source          string `json:"source"`
 	Name            string `json:"title"`
 	Company         string `json:"company_name"`
 	URL             string `json:"url"`

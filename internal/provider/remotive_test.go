@@ -38,4 +38,12 @@ func TestLoadRemotiveVacancies(t *testing.T) {
 	if items[0].Name != "Junior Go Developer" {
 		t.Errorf("неверное название: %s", items[0].Name)
 	}
+
+	if items[0].ID != "123" {
+		t.Errorf("ожидался ID 123, получен %s", items[0].ID)
+	}
+
+	if items[0].Source != "remotive" {
+		t.Errorf("неверный источник: %s", items[0].Source)
+	}
 }

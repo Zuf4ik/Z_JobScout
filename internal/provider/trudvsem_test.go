@@ -67,3 +67,36 @@ func TestParseTrudvsemExperience(t *testing.T) {
 		)
 	}
 }
+
+func TestParseTrudvsemID(t *testing.T) {
+	body := []byte(`{
+		"status": "200",
+		"results": {
+			"vacancies": [
+				{
+					"vacancy": {
+						"id": "abc-123",
+						"job-name": "Go Developer"
+					}
+				}
+			]
+		}
+	}`)
+
+	items, err := ParseTrudvsemVacancies(body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(items) != 1 {
+		t.Fatalf("ожидалась 1 вакансия, получено %d", len(items))
+	}
+
+	if items[0].ID != "abc-123" {
+		t.Errorf("неверный ID: %s", items[0].ID)
+	}
+
+	if items[0].Source != "trudvsem" {
+		t.Errorf("неверный источник: %s", items[0].Source)
+	}
+}

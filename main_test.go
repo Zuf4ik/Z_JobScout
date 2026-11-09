@@ -5,12 +5,12 @@ import "testing"
 func TestFilterVacancies(t *testing.T) {
 	items := []Vacancy{
 		{
-			ID:          1,
+			ID:          "1",
 			Name:        "Backend Developer",
 			Description: "Разработка на GOLANG",
 		},
 		{
-			ID:          2,
+			ID:          "2",
 			Name:        "Python Developer",
 			Description: "Разработка на Python",
 		},
@@ -25,9 +25,9 @@ func TestFilterVacancies(t *testing.T) {
 		)
 	}
 
-	if got[0].ID != 1 {
+	if got[0].ID != "1" {
 		t.Errorf(
-			"ожидалась вакансия с ID 1, получен ID %d",
+			"ожидалась вакансия с ID 1, получен ID %s",
 			got[0].ID,
 		)
 	}
@@ -36,7 +36,7 @@ func TestFilterVacancies(t *testing.T) {
 func TestFilterVacanciesNoMatches(t *testing.T) {
 	items := []Vacancy{
 		{
-			ID:          1,
+			ID:          "1",
 			Name:        "Python Developer",
 			Description: "Разработка на Python",
 		},
@@ -60,10 +60,10 @@ func TestFilterByExperience(t *testing.T) {
 	three := 3
 
 	items := []Vacancy{
-		{ID: 1, ExperienceYears: &zero},
-		{ID: 2, ExperienceYears: &one},
-		{ID: 3, ExperienceYears: &three},
-		{ID: 4},
+		{ID: "1", ExperienceYears: &zero},
+		{ID: "2", ExperienceYears: &one},
+		{ID: "3", ExperienceYears: &three},
+		{ID: "4"},
 	}
 
 	got := filterByExperience(items, 1)
@@ -75,15 +75,15 @@ func TestFilterByExperience(t *testing.T) {
 		)
 	}
 
-	expectedIDs := []int{1, 2, 4}
+	expectedIDs := []string{"1", "2", "4"}
 
-	for i, vacancy := range got {
-		if vacancy.ID != expectedIDs[i] {
+	for i, v := range got {
+		if v.ID != expectedIDs[i] {
 			t.Errorf(
-				"позиция %d: ожидался ID %d, получен %d",
+				"позиция %d: ожидался ID %s, получен %s",
 				i,
 				expectedIDs[i],
-				vacancy.ID,
+				v.ID,
 			)
 		}
 	}
