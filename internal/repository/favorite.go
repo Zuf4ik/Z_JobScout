@@ -6,7 +6,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	// Р—Р°РјРµРЅРё РїСѓС‚СЊ РЅР° РёРјСЏ РјРѕРґСѓР»СЏ РёР· go.mod.
+	// Замени путь на имя модуля из go.mod.
 	"github.com/Zuf4ik/Z_JobScout/internal/vacancy"
 )
 
@@ -50,7 +50,7 @@ func (r *FavoriteRepository) Add(
 		favorite.URL,
 	)
 	if err != nil {
-		return fmt.Errorf("РЅРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ РІР°РєР°РЅСЃРёСЋ: %w", err)
+		return fmt.Errorf("не удалось сохранить вакансию: %w", err)
 	}
 
 	return nil
@@ -77,7 +77,7 @@ func (r *FavoriteRepository) GetAll(
 
 	rows, err := r.db.Query(ctx, query, userID)
 	if err != nil {
-		return nil, fmt.Errorf("РѕС€РёР±РєР° РїРѕР»СѓС‡РµРЅРёСЏ РёР·Р±СЂР°РЅРЅРѕРіРѕ: %w", err)
+		return nil, fmt.Errorf("ошибка получения избранного: %w", err)
 	}
 	defer rows.Close()
 
@@ -97,14 +97,14 @@ func (r *FavoriteRepository) GetAll(
 			&favorite.SavedAt,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("РѕС€РёР±РєР° С‡С‚РµРЅРёСЏ РІР°РєР°РЅСЃРёРё: %w", err)
+			return nil, fmt.Errorf("ошибка чтения вакансии: %w", err)
 		}
 
 		favorites = append(favorites, favorite)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("РѕС€РёР±РєР° С‡С‚РµРЅРёСЏ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ: %w", err)
+		return nil, fmt.Errorf("ошибка чтения результатов: %w", err)
 	}
 
 	return favorites, nil
@@ -125,7 +125,7 @@ func (r *FavoriteRepository) Delete(
 
 	_, err := r.db.Exec(ctx, query, userID, source, vacancyID)
 	if err != nil {
-		return fmt.Errorf("РЅРµ СѓРґР°Р»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ РІР°РєР°РЅСЃРёСЋ: %w", err)
+		return fmt.Errorf("не удалось удалить вакансию: %w", err)
 	}
 
 	return nil
