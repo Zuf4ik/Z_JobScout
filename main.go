@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Zuf4ik/Z_JobScout/internal/provider"
 	"github.com/Zuf4ik/Z_JobScout/internal/search"
 	"github.com/Zuf4ik/Z_JobScout/internal/vacancy"
 )
@@ -78,7 +79,7 @@ func run() error {
 
 	switch source {
 	case "remotive":
-		items, err = loadVacancies(path)
+		items, err = provider.LoadRemotiveVacancies(path)
 	case "trudvsem":
 		items, err = loadTrudvsemVacancies(path)
 	case "trudvsem-online":
